@@ -5,6 +5,16 @@ Excel-derived sheet, another CRM's export, a manual spreadsheet — anything)
 and have it intelligently mapped into GrowEasy's CRM lead schema using an
 LLM, with a clean preview → confirm → results flow.
 
+## Live Demo
+
+- **Frontend (Vercel):** https://groweasy-csv-importer-shailesh5.vercel.app/
+- **Backend API (Render):** https://groweasy-csv-importer-68cy.onrender.com
+
+> Note: the backend is on Render's free tier and spins down after periods of
+> inactivity. If it's been idle, the first upload after that may take
+> 30-50 seconds to wake up before processing starts — this is expected, not
+> a bug.
+
 > **Position applied for:** _Intern / Full-Time_ — <!-- update this line -->
 
 ---
@@ -198,8 +208,17 @@ GEMINI_API_KEY=your_key docker compose up --build
 
 ## Deployment notes
 
-- Backend deploys as a standard Node service (Render, Railway, Fly.io,
-  etc.) — build with `npm run build`, start with `npm start`, set
-  `GEMINI_API_KEY` and `FRONTEND_ORIGIN` in the environment.
-- Frontend deploys to Vercel out of the box — set
-  `NEXT_PUBLIC_API_BASE_URL` to the deployed backend URL.
+This project is deployed as two separate services (see Live Demo links above):
+
+- **Backend → Render.** Root directory `backend`, build command
+  `npm install && npm run build`, start command `npm start`. Environment
+  variables set in the Render dashboard: `GEMINI_API_KEY`, `GEMINI_MODEL`,
+  `FRONTEND_ORIGIN` (must exactly match the deployed frontend URL, no
+  trailing slash — this is what CORS checks against), `MAX_FILE_SIZE_MB`,
+  `AI_BATCH_SIZE`, `AI_MAX_RETRIES`.
+- **Frontend → Vercel.** Root directory `frontend`. Environment variable
+  `NEXT_PUBLIC_API_BASE_URL` set to the Render backend URL. Since this is a
+  build-time (`NEXT_PUBLIC_*`) variable, any change to it requires a fresh
+  deploy to take effect, not just a config save.
+
+Both platforms redeploy automatically on push to `main`.
